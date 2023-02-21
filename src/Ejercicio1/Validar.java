@@ -4,28 +4,31 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Scanner;
 
 public class Validar {
     public static void main(String[] args) {
+
         //Declaramos las variables
-        String usuario;
-        String password;
-        byte[] passwordBytes;
-        byte[] resumen = null;
-        String resumenHexadecimal;
+        String usuarioValidar;
+        String passwordValidar;
+        byte[] passwordBytesValidar;
+        byte[] resumenValidar = null;
+        String resumenHexadecimalValidar;
 
         //Declaramos el scanner
         Scanner sc = new Scanner(System.in);
 
+        //Le pedimos al usuario que introduzca su nombre y su conntraseña
         System.out.println("Introduce tu nombre de usuario: ");
-        usuario = sc.next();
+        usuarioValidar = sc.next();
         System.out.println("Introduce tu password: ");
-        password = sc.next();
+        passwordValidar = sc.next();
 
         try {
             // Convierto el mensaje introducido por el usuario en un array de bytes
-            passwordBytes = password.getBytes("UTF-8");
+            passwordBytesValidar = passwordValidar.getBytes("UTF-8");
 
             // Creo una instancia de MessageDigest con el algoritmo SHA-256
             MessageDigest algoritmo = MessageDigest.getInstance("SHA-256");
@@ -34,15 +37,15 @@ public class Validar {
             algoritmo.reset();
 
             // Añado el mensaje del cual quiero calcular su hash
-            algoritmo.update(passwordBytes);
+            algoritmo.update(passwordBytesValidar);
 
             // Generamos el resumen
-            resumen = algoritmo.digest();
+            resumenValidar = algoritmo.digest();
 
-            resumenHexadecimal = String.format("%064x", new BigInteger(1, resumen));
-            System.out.println(resumenHexadecimal);
+            resumenHexadecimalValidar = String.format("%064x", new BigInteger(1, resumenValidar));
+            System.out.println(resumenHexadecimalValidar);
 
-            //TODO: comprobar si los resumenes de las contraseñas son iguales
+            CalculoHash.compararPasswords(buscarEnFichero(usuarioValidar, passwordValidar), resumenValidar);
 
         } catch (NoSuchAlgorithmException e) {
             System.err.println("El algoritmo seleccionado no existe");
@@ -50,33 +53,29 @@ public class Validar {
         } catch (UnsupportedEncodingException e) {
             System.err.println("No se conoce la codificación especificada");
             e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
-    
 
-    private String comprobarPassword(String password){
+
+    private static byte[] buscarEnFichero(String usuario, String password) {
 
         //Declaracion de variables
         BufferedReader lecturaFichero;
-        String mensajeSalida = null;
         String linea;
+        byte[] claveCodificada = new byte[0];
 
         try {
             //Preparo la lectura del fichero
             lecturaFichero = new BufferedReader(new FileReader("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
             linea = lecturaFichero.readLine();
 
-            while (linea != null){      //Mientras se lea una linea en el fichero
+            while (linea != null) {      //Mientras se lea una linea en el fichero
 
-                if (linea.split(" ")[1].equals(password)){   //Si la dirección introducida es igual a la del fichero
-                    //Indicamos la ip de la dirección web
-                    mensajeSalida = "La password es " + linea.split(" ")[1];
+                if (linea.split(" ")[0].equals(password)) {
+                    claveCodificada = Base64.getDecoder().decode(linea.split(" ")[1]);
                     break;
-                } else {    //Si no encontramos la dirección en el fichero
-                    //Indicamos que la dirección no está registrada en el fichero
-                    mensajeSalida = "Lo sentimos, password no registrada";
+                } else {
+                    System.out.printf("Usuario no encontrado");
                 }
                 linea = lecturaFichero.readLine();  //Leemos la siguiente línea
             }
@@ -84,6 +83,8 @@ public class Validar {
             System.err.println("Error, archivo no encontrado");
             e.printStackTrace();
         }
-        return mensajeSalida;
+
+        return claveCodificada;
+
     }
 }
