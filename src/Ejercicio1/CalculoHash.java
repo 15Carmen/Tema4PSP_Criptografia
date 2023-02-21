@@ -7,7 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class CalculoHash {
 
-    public static boolean compararPasswords(byte[] resumenPassword, byte[] resumen2Password){
+
+    public static boolean compararResumenes(byte[] resumenPassword, byte[] resumen2Password){
         return MessageDigest.isEqual(resumenPassword, resumen2Password);
     }
 

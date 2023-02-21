@@ -40,10 +40,10 @@ public class Registro {
 
         try {
             //Preparo el fichero para escribir
-            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmnbo\\IntelliJ\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
 
             //Escribo el fichero
-            bw.write(nombre + ";" + Arrays.toString(resumen) + ";" + resumenHexadecimal);
+            bw.write(nombre + " " + resumenHexadecimal);
             bw.newLine();
             bw.flush();
 
