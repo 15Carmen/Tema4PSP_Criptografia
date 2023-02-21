@@ -8,12 +8,15 @@ import java.util.Scanner;
 
 public class Validar {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        //Declaramos las variables
         String usuario;
         String password;
         byte[] passwordBytes;
         byte[] resumen = null;
         String resumenHexadecimal;
+
+        //Declaramos el scanner
+        Scanner sc = new Scanner(System.in);
 
         System.out.println("Introduce tu nombre de usuario: ");
         usuario = sc.next();
@@ -62,7 +65,7 @@ public class Validar {
 
         try {
             //Preparo la lectura del fichero
-            lecturaFichero = new BufferedReader(new FileReader("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\usuarios.txt"));
+            lecturaFichero = new BufferedReader(new FileReader("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
             linea = lecturaFichero.readLine();
 
             while (linea != null){      //Mientras se lea una linea en el fichero

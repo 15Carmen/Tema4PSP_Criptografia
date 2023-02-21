@@ -11,12 +11,14 @@ import java.util.Scanner;
 
 public class Registro {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        //Declaramos las variables
         String usuario;
         String password;
         byte[] passwordBytes;
         byte[] resumen = null;
         String resumenHexadecimal;
+
+        Scanner sc = new Scanner(System.in);
 
         System.out.println("Introduce tu nombre de usuario: ");
         usuario = sc.next();
@@ -42,7 +44,7 @@ public class Registro {
             resumenHexadecimal = String.format("%064x", new BigInteger(1, resumen));
             System.out.println(resumenHexadecimal);
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\usuarios.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
             bw.write(usuario + " ");
             bw.write(resumenHexadecimal);
             bw.newLine();
