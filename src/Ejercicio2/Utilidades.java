@@ -7,33 +7,40 @@ import java.util.Base64;
 
 public class Utilidades {
     //Variables de clase
-    private static final int LONGITUD = 16;
+    private static final int LONGITUD_BLOQUE = 16;
     private static final String ALGORITMO = "AES/ECB/PKCS5Padding";
 
     /**
-     * Precondiciones: La clave debe ser un String y tener 16 caracteres.
-     * Recibe la clave introducida por el usuario y la convierte en una Key para cifrar el mensaje.
-     * Postcondiciones: Devuelve un Key con la clave para codificar el mensaje.
-     * @param claveUsuario La clave introducida por el usuario
-     * @return Key con la clave para codificar el mensaje
+     * Precondiciones: La clave introducida por el usuario debe tener 16 caracteres.
+     * Método que recibe
+     * @param claveUsuario y la convierte en una Key para cifrar el mensaje.
+     * @return Key con la clave para codificar un mensaje
      */
     public static Key obtenerClave (String claveUsuario){
-        return new SecretKeySpec(claveUsuario.getBytes(), 0, LONGITUD, "AES");
+        return new SecretKeySpec(claveUsuario.getBytes(), 0, LONGITUD_BLOQUE, "AES");
     }
+
     /**
-     * Precondiciones: Debe recibir un texto y una clave para cifrar el texto.
-     * Recibe el texto a cifrar y la clave para cifrarlo y mediante la clase Cipher cifra el texto y lo devuelve.
-     * Postcondiciones: Devuelve el texto cifrado.
-     * @param texto El texto a cifrar
-     * @param clave La clave para cifrar el texto
+     * Método que recibe el
+     * @param texto a cifrar y la
+     * @param clave para cifrarlo mediante la clase Cipher.
      * @return El texto cifrado String
      */
     public static String cifrar (String texto, Key clave){
+        //Declaramos las variables
         byte[] cifrado = new byte[0];
+        Cipher cipher;
+
         try {
-            Cipher cipher = Cipher.getInstance(ALGORITMO);
+            //Creamos un Cipher
+            cipher = Cipher.getInstance(ALGORITMO);
+
+            //Iniciamos el cifrado con la clave
             cipher.init(Cipher.ENCRYPT_MODE, clave);
+
+            //Llevamos a cabo el cifrado
             cifrado = cipher.doFinal(texto.getBytes());
+
         } catch (NoSuchAlgorithmException e) {
             System.err.println("No existe el algoritmo especificado");
             e.printStackTrace();
@@ -50,21 +57,32 @@ public class Utilidades {
             System.err.println("El padding seleccionado no es correcto");
             e.printStackTrace();
         }
+
+        //Devolvemos el mensaje cifrado en Base64
         return Base64.getEncoder().encodeToString(cifrado);
     }
+
+
     /**
-     * Precondiciones: Debe recibir un texto cifrado y una clave para descifrar el texto.
-     * Recibe el texto cifrado y la clave para descifrarlo y mediante la clase Cipher descifra el texto y lo devuelve.
-     * Postcondiciones: Devuelve el texto descifrado en formato String.
-     * @param mensajeCifrado El texto cifrado
-     * @param clave La clave para descifrar el texto
+     * Método que recibe el
+     * @param mensajeCifrado a descifrar y la
+     * @param clave para descifrarlo mediante la clase Cipher.
      * @return El texto descifrado String
      */
     public static String descifrar (String mensajeCifrado, Key clave){
+
+        //Declaramos las variables
         byte[] descifrar = new byte[0];
+        Cipher cipher;
+
         try{
-            Cipher cipher = Cipher.getInstance(ALGORITMO);
+            //Creamos un Cipher
+            cipher = Cipher.getInstance(ALGORITMO);
+
+            //Iniciamos el descifrado con la clave
             cipher.init(Cipher.DECRYPT_MODE, clave);
+
+            //Llevamos a cabo el descifrado
             descifrar = cipher.doFinal(Base64.getDecoder().decode(mensajeCifrado));
         } catch (NoSuchPaddingException e) {
             System.err.println("No existe el algoritmo especificado");
@@ -82,6 +100,8 @@ public class Utilidades {
             System.err.println("El padding seleccionado no es correcto");
             e.printStackTrace();
         }
+
+        //Devolvemos el mensaje descifrado
         return new String(descifrar);
     }
 }
