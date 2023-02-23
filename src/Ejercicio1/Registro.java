@@ -7,55 +7,51 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Registro {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        //Declaramos las variables
         String usuario;
         String password;
-        byte[] passwordBytes;
-        byte[] resumen = null;
-        String resumenHexadecimal;
 
+        //Declaramos el scanner
+        Scanner sc = new Scanner(System.in);
+
+        //Le pedimos al usuario que introduzca su nombre de usuario y contraseña
         System.out.println("Introduce tu nombre de usuario: ");
         usuario = sc.next();
         System.out.println("Introduce tu password: ");
         password = sc.next();
 
+        //Guardamos en un fichero los datos introducidos por el usuario
+        guardarCredenciales(usuario, password);
+
+    }
+
+    private static void guardarCredenciales(String nombre, String password) {
+
+        //Obtenemos el resumen de la contraseña
+        byte[] resumen = CalculoHash.getDigest(password);
+
+        //Convertimos el resumen a hexadecimal
+        String resumenHexadecimal = String.format("%064x", new BigInteger(1, resumen));
+
         try {
-            // Convierto el mensaje introducido por el usuario en un array de bytes
-            passwordBytes = password.getBytes("UTF-8");
+            //Preparo el fichero para escribir
+            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmnbo\\IntelliJ\\Tema4PSP_Criptografia\\src\\Ejercicio1\\credenciales.cre"));
 
-            // Creo una instancia de MessageDigest con el algoritmo SHA-256
-            MessageDigest algoritmo = MessageDigest.getInstance("SHA-256");
-
-            // Reiniciamos el objeto por si contiene datos
-            algoritmo.reset();
-
-            // Añado el mensaje del cual quiero calcular su hash
-            algoritmo.update(passwordBytes);
-
-            // Generamos el resumen
-            resumen = algoritmo.digest();
-
-            resumenHexadecimal = String.format("%064x", new BigInteger(1, resumen));
-            System.out.println(resumenHexadecimal);
-
-            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\cmartin\\eclipse-workspace\\Tema4PSP_Criptografia\\src\\Ejercicio1\\usuarios.txt"));
-            bw.write(usuario + " ");
-            bw.write(resumenHexadecimal);
+            //Escribo el fichero
+            bw.write(nombre + " " + resumenHexadecimal);
             bw.newLine();
             bw.flush();
 
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("El algoritmo seleccionado no existe");
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("No se conoce la codificación especificada");
-            e.printStackTrace();
+            //Cierro el fichero
+            bw.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error al registrar el usuario");
+            e.printStackTrace();
         }
     }
 }
